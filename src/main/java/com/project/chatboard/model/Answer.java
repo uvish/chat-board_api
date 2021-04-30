@@ -22,8 +22,8 @@ public class Answer {
    @NotBlank(message = "Answer can't be empty")
    private String answer;
    private Long user_id;
-   private int up_votes;
-   private int down_votes;
+   private Long up_votes;
+   private Long down_votes;
    private Instant created;
    private String user_name;
 }

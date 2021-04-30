@@ -1,5 +1,6 @@
 package com.project.chatboard.controller;
 
+import com.project.chatboard.dto.PostEditRequest;
 import com.project.chatboard.dto.PostRequest;
 import com.project.chatboard.dto.PostResponse;
 import com.project.chatboard.model.Post;
@@ -39,5 +40,11 @@ public class PostController {
     @GetMapping("/channel/{id}")
     public List<PostResponse> getAllPostsByChannel(@PathVariable("id") Long channel_id){
         return postService.getAllPostsByChannel(channel_id);
+    }
+
+    @PostMapping("/edit")
+    public Post editPost(@RequestBody PostEditRequest postEditRequest)
+    {
+      return postService.editPost(postEditRequest);
     }
 }

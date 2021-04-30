@@ -1,5 +1,6 @@
 package com.project.chatboard.controller;
 
+import com.project.chatboard.dto.ChannelDetails;
 import com.project.chatboard.dto.ChannelDto;
 import com.project.chatboard.model.Channel;
 import com.project.chatboard.service.ChannelService;
@@ -28,4 +29,20 @@ public class ChannelController {
     public List<Channel> getAll(){
         return  channelService.getAll();
     }
+
+    @GetMapping("/admin/{id}")
+    public Long getAdmin(@PathVariable("id")Long channel_id){
+        return channelService.findAdminIdForPost(channel_id);
+
+    }
+    @GetMapping("/details/{id}")
+    public ChannelDetails getChannelDetails(@PathVariable("id")Long channel_id){
+     return channelService.channelDetails(channel_id);
+    }
+
+    @GetMapping("/channels/{id}")
+    public List<Channel> getUserChannels(@PathVariable("id")Long user_id){
+        return channelService.findAllChannelsByUser(user_id);
+    }
+
 }

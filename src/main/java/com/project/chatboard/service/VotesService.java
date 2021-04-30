@@ -18,7 +18,7 @@ import java.util.Optional;
 @Transactional
 public class VotesService {
     private final VotesRepository voteRepository;
-    private final AnswerService answerService;
+//    private final AnswerService answerService;
 
     public void upvote(Long user_id,Long answer_id){
         List<Votes> allVotes=voteRepository.findAll();
@@ -26,22 +26,22 @@ public class VotesService {
         String status="not_voted";
         Long vote_id= Long.valueOf(0);
         for(int i=0;i<allVotes.size();i++){
-            if(allVotes.get(i).getUser_id()==user_id && allVotes.get(i).getAnswer_id()==answer_id)
-                status="already_voted";
-                vote_id=allVotes.get(i).getVote_id();
+            if(allVotes.get(i).getUser_id().equals(user_id) && allVotes.get(i).getAnswer_id().equals(answer_id)) {
+                status = "already_voted";
+                vote_id = allVotes.get(i).getVote_id();
+                voteRepository.deleteById(vote_id);
+            }
         }
 
-        if(status.equalsIgnoreCase("already_voted")){
-            voteRepository.deleteById(vote_id);
-//                answerService.remove_upvote(answer_id);
-        }
+//        if(status.equalsIgnoreCase("already_voted")){
+//            voteRepository.deleteById(vote_id);
+//        }
 
-        else if(status.equals("not_voted")) {
+         if(status.equals("not_voted")) {
             Votes v = new Votes();
             v.setUser_id(user_id);
             v.setAnswer_id(answer_id);
             v.setVote("upvote");
-//            answerService.upvote(answer_id);
             voteRepository.save(v);
         }
     }
@@ -50,24 +50,24 @@ public class VotesService {
 
         String status="not_voted";
 
-        Long vote_id=Long.valueOf(0);;
+        Long vote_id=Long.valueOf(0);
         for(int i=0;i<allVotes.size();i++){
-            if(allVotes.get(i).getUser_id()==user_id && allVotes.get(i).getAnswer_id()==answer_id)
-                status="already_voted";
-                vote_id=allVotes.get(i).getVote_id();
+            if(allVotes.get(i).getUser_id().equals(user_id) && allVotes.get(i).getAnswer_id().equals(answer_id)) {
+                status = "already_voted";
+                vote_id = allVotes.get(i).getVote_id();
+                voteRepository.deleteById(vote_id);
+            }
         }
 
-        if(status.equalsIgnoreCase("already_voted")){
-//            answerService.remove_downvote(answer_id);
-            voteRepository.deleteById(vote_id);
-        }
+//        if(status.equalsIgnoreCase("already_voted")){
+//            voteRepository.deleteById(vote_id);
+//        }
 
-        else if(status.equals("not_voted")) {
+        if(status.equals("not_voted")) {
             Votes v = new Votes();
             v.setUser_id(user_id);
             v.setAnswer_id(answer_id);
             v.setVote("downvote");
-//            answerService.downvote(answer_id);
             voteRepository.save(v);
         }
     }
@@ -77,17 +77,18 @@ public class VotesService {
         int downvotes=0;
         for(int i=0;i<allVotes.size();i++)
         {
-            if(allVotes.get(i).getAnswer_id()==answer_id)
+            if(allVotes.get(i).getAnswer_id().equals(answer_id))
             {
                 if(allVotes.get(i).getVote().equalsIgnoreCase("upvote"))
                     upvotes+=1;
-                if(allVotes.get(i).getVote().equalsIgnoreCase("downvote"))
+              else if(allVotes.get(i).getVote().equalsIgnoreCase("downvote"))
                     downvotes+=1;
             }
         }
         VoteResponse votes=new VoteResponse();
         votes.setUpvotes(Long.valueOf(upvotes));
         votes.setDownvotes(Long.valueOf(downvotes));
+        System.out.println("Votes Service answers_id:"+answer_id+" "+"Upvotes:"+upvotes+" Downvotes:"+downvotes);
         return votes;
     }
 }

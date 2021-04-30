@@ -1,6 +1,7 @@
 package com.project.chatboard.service;
 
 import com.project.chatboard.dto.AnswerRequest;
+import com.project.chatboard.dto.VoteResponse;
 import com.project.chatboard.model.Answer;
 import com.project.chatboard.repository.AnswerRepository;
 import lombok.AllArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.Optional;
 public class AnswerService {
     private final AnswerRepository answerRepository;
     private final AuthService authService;
+    private final VotesService votesService;
     public Answer saveAnswer(AnswerRequest answerRequest){
         Answer ans=new Answer();
         ans.setAnswer(answerRequest.getAnswer());
@@ -25,6 +27,8 @@ public class AnswerService {
         ans.setCreated(Instant.now());
         ans.setUser_id(answerRequest.getUser_id());
         ans.setUser_name(authService.findUserNameById(answerRequest.getUser_id()));
+        ans.setDown_votes(0L);
+        ans.setUp_votes(0L);
         return answerRepository.save(ans);
     }
     public boolean deleteAnswer(Long id){
@@ -37,7 +41,14 @@ public class AnswerService {
         List<Answer> postAnswers=new ArrayList<>();
         for(int i=0;i<allAnswers.size();i++){
             if(allAnswers.get(i).getPost_id()==post_id)
+            {
+                VoteResponse votes=votesService.getVotes(allAnswers.get(i).getAnswer_id());
+//                System.out.println("Votes :id:"+allAnswers.get(i).getAnswer_id()+" "+allAnswers.get(i).getAnswer()+" "+votes.toString());
+                allAnswers.get(i).setUp_votes(votes.getUpvotes());
+                allAnswers.get(i).setDown_votes(votes.getDownvotes());
                 postAnswers.add(allAnswers.get(i));
+            }
+
         }
         return postAnswers;
     }

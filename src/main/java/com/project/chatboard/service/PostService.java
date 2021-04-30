@@ -1,5 +1,6 @@
 package com.project.chatboard.service;
 
+import com.project.chatboard.dto.PostEditRequest;
 import com.project.chatboard.dto.PostRequest;
 import com.project.chatboard.dto.PostResponse;
 import com.project.chatboard.model.Post;
@@ -14,6 +15,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -86,5 +88,18 @@ public List<PostResponse> getAllPosts(long user_id){
             }
         }
         return channelPosts;
+    }
+
+    public Post editPost(PostEditRequest postEditRequest){
+        Optional<Post> og=postRepository.findById(postEditRequest.getPost_id());
+        Post editedPost=new Post();
+        editedPost.setPost_id(og.get().getPost_id());
+        editedPost.setPost_title(postEditRequest.getTitle());
+        editedPost.setPost_content(postEditRequest.getContent());
+        editedPost.setCreated(og.get().getCreated());
+        editedPost.setChannel_id(og.get().getChannel_id());
+        editedPost.setUser_id(og.get().getUser_id());
+        postRepository.save(editedPost);
+        return editedPost;
     }
 }
