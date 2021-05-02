@@ -3,7 +3,11 @@ package com.project.chatboard.service;
 import com.project.chatboard.dto.AnswerRequest;
 import com.project.chatboard.dto.VoteResponse;
 import com.project.chatboard.model.Answer;
+import com.project.chatboard.model.Channel;
+import com.project.chatboard.model.Post;
 import com.project.chatboard.repository.AnswerRepository;
+import com.project.chatboard.repository.ChannelRepository;
+import com.project.chatboard.repository.PostRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +24,8 @@ public class AnswerService {
     private final AnswerRepository answerRepository;
     private final AuthService authService;
     private final VotesService votesService;
+    private final PostRepository postRepository;
+    private final ChannelRepository channelRepository;
     public Answer saveAnswer(AnswerRequest answerRequest){
         Answer ans=new Answer();
         ans.setAnswer(answerRequest.getAnswer());
@@ -60,6 +66,12 @@ public class AnswerService {
             }
         }
         return false;
+    }
+    public Long getAnswerAdmin(Long ans_id){
+     Optional<Answer> ans=answerRepository.findById(ans_id);
+     Optional<Post> post=postRepository.findById(ans.get().getPost_id());
+     Optional<Channel> channel=channelRepository.findById(post.get().getChannel_id());
+     return channel.get().getAdmin_id();
     }
 
 //    public Answer upvote(Long id){

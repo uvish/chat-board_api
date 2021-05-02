@@ -3,6 +3,7 @@ package com.project.chatboard.controller;
 import com.project.chatboard.dto.LoginRequest;
 import com.project.chatboard.dto.RegisterRequest;
 import com.project.chatboard.service.AuthService;
+import com.project.chatboard.service.EncryptionService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     AuthService authService;
+    EncryptionService encryptionService;
 
     @PostMapping("/signup")
     public ResponseEntity<String> signup (@RequestBody RegisterRequest registerRequest){
@@ -34,12 +36,20 @@ public class AuthController {
         {
             String username=authService.findUsername(loginRequest.getEmail());
             long id=authService.findId(loginRequest.getEmail());
-            return ResponseEntity.ok(username+":"+id);
+            String encryptedToken = encryptionService.encrypt(username+":"+id, "uvish") ;
+            return ResponseEntity.ok(encryptedToken);
         }
         else
         {
             return new ResponseEntity<>("User Not Found",HttpStatus.NOT_FOUND);
         }
+    }
+    @GetMapping("/authenticate/{token}")
+    public ResponseEntity<String> auth(@PathVariable("token") String token){
+       String decrypted =encryptionService.decrypt(token, "uvish") ;
+       if(authService.findExistingByToken(decrypted))
+           return ResponseEntity.ok(decrypted);
+       return new ResponseEntity<>("User not found",HttpStatus.UNAUTHORIZED);
     }
 
 

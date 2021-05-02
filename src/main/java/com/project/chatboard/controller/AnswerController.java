@@ -2,6 +2,7 @@ package com.project.chatboard.controller;
 
 import com.project.chatboard.dto.AnswerRequest;
 import com.project.chatboard.model.Answer;
+import com.project.chatboard.repository.AnswerRepository;
 import com.project.chatboard.service.AnswerService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/answer")
@@ -16,6 +18,7 @@ import java.util.List;
 @CrossOrigin
 public class AnswerController {
     AnswerService answerService;
+    AnswerRepository answerRepository;
 
     @PostMapping("/create")
     public Answer createAnswer(@RequestBody AnswerRequest answerRequest){
@@ -34,6 +37,11 @@ public class AnswerController {
             return new ResponseEntity<>("Deleted", HttpStatus.OK);
         }
         return new ResponseEntity<>("Error",HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/getAdminIdByAnswer/{id}")
+    public Long getChannelId(@PathVariable("id") Long ans_id){
+        return answerService.getAnswerAdmin(ans_id);
     }
 
 //    @PostMapping("/upvote/{id}")

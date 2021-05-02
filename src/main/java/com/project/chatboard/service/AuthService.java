@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import javax.transaction.Transactional;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -44,6 +45,14 @@ public class AuthService {
                 return true;
             }
         }
+        return false;
+    }
+    public boolean findExistingByToken(String token){
+        String username=token.split(":")[0];
+        String user_id=token.split(":")[1];
+        Optional<User> users=userRepository.findById(Long.valueOf(user_id));
+        if(users.isPresent() && users.get().getUsername().equals(username))
+            return true;
         return false;
     }
     public String findUsername(String email){
