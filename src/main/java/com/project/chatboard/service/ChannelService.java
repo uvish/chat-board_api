@@ -2,7 +2,9 @@ package com.project.chatboard.service;
 
 import com.project.chatboard.dto.ChannelDetails;
 import com.project.chatboard.dto.ChannelDto;
+import com.project.chatboard.dto.JoinRequetDTO;
 import com.project.chatboard.model.Channel;
+import com.project.chatboard.model.JoinRequests;
 import com.project.chatboard.repository.ChannelRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,11 +27,15 @@ public class ChannelService {
         channel.setName(channelRequest.getName());
          return channelRepository.save(channel);
     }
+    public Long getChannelAdmin(Long channel_id){
+        Optional<Channel> ch=channelRepository.findById(channel_id);
+        return ch.get().getAdmin_id();
+    }
     public boolean CheckExisting(String name){
         int exists=0;
         List<Channel> channels=channelRepository.findAll();
-        for(int i=0;i<channels.size();i++){
-            if(channels.get(i).getName().equalsIgnoreCase(name))exists=1;
+        for (Channel channel : channels) {
+            if (channel.getName().equalsIgnoreCase(name)) exists = 1;
         }
         if(exists==1)return true;
         else return false;
@@ -41,10 +47,9 @@ public class ChannelService {
 
     public Long findAdminIdForPost(Long channel_id){
         List<Channel> allChannels=channelRepository.findAll();
-        for(int i=0;i<allChannels.size();i++)
-        {
-            if(allChannels.get(i).getChannel_id()==channel_id)
-                return allChannels.get(i).getAdmin_id();
+        for (Channel allChannel : allChannels) {
+            if (allChannel.getChannel_id().equals(channel_id))
+                return allChannel.getAdmin_id();
         }
         return null;
     }
@@ -62,12 +67,25 @@ public class ChannelService {
     {
         List<Channel> allChannels=channelRepository.findAll();
         List<Channel> userChannels=new ArrayList<>();
-        for(int i=0;i<allChannels.size();i++){
-            if(allChannels.get(i).getAdmin_id().equals(user_id)){
-                userChannels.add(allChannels.get(i));
+        for (Channel allChannel : allChannels) {
+            if (allChannel.getAdmin_id().equals(user_id)) {
+                userChannels.add(allChannel);
             }
         }
         return userChannels;
+    }
+    public String getChannelNameById(Long channel_id){
+        Optional<Channel> ch= channelRepository.findById(channel_id);
+        return ch.get().getName();
+    }
+    public Channel getChannelById(Long channel_id){
+        Optional<Channel> ch=channelRepository.findById(channel_id);
+        Channel found=new Channel();
+        found.setChannel_id(ch.get().getChannel_id());
+        found.setDescripition(ch.get().getDescripition());
+        found.setName(ch.get().getName());
+        found.setAdmin_id(ch.get().getAdmin_id());
+        return found;
     }
 
 }

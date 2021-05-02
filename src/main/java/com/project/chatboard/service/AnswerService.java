@@ -39,14 +39,13 @@ public class AnswerService {
     public List<Answer> getAnswersByPostId(Long post_id){
         List<Answer> allAnswers=answerRepository.findAll();
         List<Answer> postAnswers=new ArrayList<>();
-        for(int i=0;i<allAnswers.size();i++){
-            if(allAnswers.get(i).getPost_id()==post_id)
-            {
-                VoteResponse votes=votesService.getVotes(allAnswers.get(i).getAnswer_id());
+        for (Answer allAnswer : allAnswers) {
+            if (allAnswer.getPost_id().equals(post_id)) {
+                VoteResponse votes = votesService.getVotes(allAnswer.getAnswer_id());
 //                System.out.println("Votes :id:"+allAnswers.get(i).getAnswer_id()+" "+allAnswers.get(i).getAnswer()+" "+votes.toString());
-                allAnswers.get(i).setUp_votes(votes.getUpvotes());
-                allAnswers.get(i).setDown_votes(votes.getDownvotes());
-                postAnswers.add(allAnswers.get(i));
+                allAnswer.setUp_votes(votes.getUpvotes());
+                allAnswer.setDown_votes(votes.getDownvotes());
+                postAnswers.add(allAnswer);
             }
 
         }
