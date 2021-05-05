@@ -47,4 +47,8 @@ public class PostController {
     {
       return postService.editPost(postEditRequest);
     }
+    @GetMapping("/getRecent")
+    public List<Post> getRecent(){
+        return postService.getRecent();
+    }
 }

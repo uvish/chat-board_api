@@ -41,6 +41,13 @@ public class AnswerService {
         answerRepository.deleteById(id);
         return true;
     }
+    public void deleteAnswersByPost(Long post_id){
+        List<Answer> all=answerRepository.findAll();
+        for (Answer answer : all) {
+            if (answer.getPost_id().equals(post_id))
+                answerRepository.deleteById(answer.getAnswer_id());
+        }
+    }
 
     public List<Answer> getAnswersByPostId(Long post_id){
         List<Answer> allAnswers=answerRepository.findAll();

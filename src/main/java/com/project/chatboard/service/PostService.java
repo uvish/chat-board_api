@@ -5,15 +5,12 @@ import com.project.chatboard.dto.PostRequest;
 import com.project.chatboard.dto.PostResponse;
 import com.project.chatboard.model.Post;
 import com.project.chatboard.repository.PostRepository;
-import com.project.chatboard.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +20,7 @@ import java.util.Optional;
 public class PostService {
     private final PostRepository postRepository;
     private final AuthService authService;
+    private final AnswerService answerService;
     public Post savePost (PostRequest postRequest){
         Post post=new Post();
         post.setPost_title(postRequest.getTitle());
@@ -35,6 +33,7 @@ public class PostService {
 
     public boolean deletePost(Long id){
         postRepository.deleteById(id);
+         answerService.deleteAnswersByPost(id);
         return true;
     }
 
@@ -101,5 +100,16 @@ public List<PostResponse> getAllPosts(long user_id){
         editedPost.setUser_id(og.get().getUser_id());
         postRepository.save(editedPost);
         return editedPost;
+    }
+    public List<Post> getRecent(){
+        List<Post> all=postRepository.findAll();
+        List<Post> recent=new ArrayList<>();
+        int length=all.size();
+        if(length>10)length=10;
+        for(int i=all.size()-1;i>=all.size()-length;i--)
+        {
+            recent.add(all.get(i));
+        }
+        return recent;
     }
 }
