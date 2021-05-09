@@ -55,5 +55,9 @@ public class ChannelController {
     public List<Channel> getUserChannels(@PathVariable("id")Long user_id){
         return channelService.findAllChannelsByUser(user_id);
     }
+    @GetMapping("/delete/{id}")
+    public ResponseEntity<String> deleteChannel(@PathVariable("id")Long channel_id){
+      return channelService.deleteChannel(channel_id);
+    }
 
 }

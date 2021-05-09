@@ -5,8 +5,12 @@ import com.project.chatboard.dto.ChannelDto;
 import com.project.chatboard.dto.JoinRequetDTO;
 import com.project.chatboard.model.Channel;
 import com.project.chatboard.model.JoinRequests;
+import com.project.chatboard.model.Post;
 import com.project.chatboard.repository.ChannelRepository;
+import com.project.chatboard.repository.PostRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -19,6 +23,8 @@ import java.util.Optional;
 @Transactional
 public class ChannelService {
   private final ChannelRepository channelRepository;
+  private final PostRepository postRepository;
+  private final PostService postService;
   private final AuthService authService;
     public Channel save (ChannelDto channelRequest){
         Channel channel=new Channel();
@@ -86,6 +92,15 @@ public class ChannelService {
         found.setName(ch.get().getName());
         found.setAdmin_id(ch.get().getAdmin_id());
         return found;
+    }
+    public ResponseEntity<String> deleteChannel(Long channel_id){
+        channelRepository.deleteById(channel_id);
+        List<Post> allPosts=postRepository.findAll();
+        for (Post allPost : allPosts) {
+            if (allPost.getChannel_id().equals(channel_id))
+                postService.deletePost(allPost.getPost_id());
+        }
+        return new ResponseEntity<>("Deleted", HttpStatus.OK);
     }
 
 }
